@@ -63,9 +63,8 @@ import static java.util.Collections.singleton;
 import static java.util.Collections.singletonMap;
 import static java.util.concurrent.TimeUnit.DAYS;
 import static java.util.function.Function.identity;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.nullValue;
-import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
@@ -135,7 +134,7 @@ public class CancellationTest {
     }
 
     @Test
-    public void cancelSuspended() throws Exception {
+    public void cancelSuspended() throws Throwable {
         final TestCancellable cancellable = new TestCancellable();
         when(execMock.schedule(any(Runnable.class), eq(7L), eq(DAYS))).thenReturn(cancellable);
 
@@ -144,24 +143,24 @@ public class CancellationTest {
     }
 
     @Test
-    public void cancelSingle() throws Exception {
+    public void cancelSingle() throws Throwable {
         testCancelResponseSingle(get("/single"));
     }
 
     @Test
-    public void cancelOffload() throws Exception {
+    public void cancelOffload() throws Throwable {
         testCancelResponseSingle(get("/offload"));
     }
 
     @Test
-    public void cancelOioStreams() throws Exception {
+    public void cancelOioStreams() throws Throwable {
         testCancelResponsePayload(post("/oio-streams"));
         testCancelResponseSingle(post("/offload-oio-streams"));
         testCancelResponseSingle(post("/no-offloads-oio-streams"));
     }
 
     @Test
-    public void cancelRsStreams() throws Exception {
+    public void cancelRsStreams() throws Throwable {
         testCancelResponsePayload(post("/rs-streams"));
         testCancelResponsePayload(post("/rs-streams?subscribe=true"));
         testCancelResponseSingle(post("/offload-rs-streams"));
@@ -171,7 +170,7 @@ public class CancellationTest {
     }
 
     @Test
-    public void cancelSse() throws Exception {
+    public void cancelSse() throws Throwable {
         doAnswer(invocation -> {
             Object[] args = invocation.getArguments();
             return execRule.executor().schedule((Runnable) args[0], (long) args[1], (TimeUnit) args[2]);
@@ -184,7 +183,7 @@ public class CancellationTest {
         cancellableResources.sseSinkClosedLatch.await();
     }
 
-    private void testCancelResponsePayload(final StreamingHttpRequest req) throws Exception {
+    private void testCancelResponsePayload(final StreamingHttpRequest req) throws Throwable {
         // The handler method uses OutputStream APIs which are blocking. So we need to call handle and subscribe on
         // different threads because the write operation will block on the Subscriber creating requestN demand.
         Single<StreamingHttpResponse> respSingle = execRule.executor().submit(() ->
@@ -206,15 +205,17 @@ public class CancellationTest {
 
         cancelledLatch.await();
 
-        assertThat(errorRef.get(), is(nullValue()));
+        if (errorRef.get() != null) {
+            throw errorRef.get();
+        }
     }
 
-    private void testCancelResponseSingle(final StreamingHttpRequest req) throws Exception {
+    private void testCancelResponseSingle(final StreamingHttpRequest req) throws Throwable {
         testCancelResponseSingle(req, true);
     }
 
     private void testCancelResponseSingle(final StreamingHttpRequest req,
-                                          boolean enableOffload) throws Exception {
+                                          boolean enableOffload) throws Throwable {
         final AtomicReference<Throwable> errorRef = new AtomicReference<>();
         final CountDownLatch cancelledLatch = new CountDownLatch(1);
 
@@ -258,7 +259,9 @@ public class CancellationTest {
 
         cancelledLatch.await();
 
-        assertThat(errorRef.get(), is(nullValue()));
+        if (errorRef.get() != null) {
+            throw errorRef.get();
+        }
     }
 
     private static StreamingHttpRequest get(final String resourcePath) {
