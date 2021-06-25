@@ -20,10 +20,10 @@ import io.opentracing.propagation.Format;
 import javax.annotation.Nullable;
 
 /**
- * A {@link Format} compatible with {@link InMemoryTraceState}.
+ * A {@link Format} compatible with {@link InMemorySpanContext}.
  * @param <C> the carrier type.
  */
-public interface InMemoryTraceStateFormat<C> extends Format<C> {
+public interface InMemorySpanContextFormat<C> extends Format<C> {
     /**
      * Inject a trace state into a carrier.
      *
@@ -36,9 +36,9 @@ public interface InMemoryTraceStateFormat<C> extends Format<C> {
      * Extract the trace state from a carrier.
      *
      * @param carrier carrier to extract from
-     * @return extracted trace state, may be {@code null} if the carrier doesn't contain a valid span
+     * @return extracted {@link InMemorySpanContext}, may be {@code null} if the carrier doesn't contain a valid span
      * @throws Exception if any parsing error happened during extraction
      */
     @Nullable
-    InMemoryTraceState extract(C carrier) throws Exception;
+    InMemorySpanContext extract(C carrier) throws Exception;
 }

@@ -121,9 +121,9 @@ class TracingHttpServiceFilterTest {
                                 textSerializer()));
                     }
                     return succeeded(responseFactory.ok().payloadBody(from(new TestSpanState(
-                                    span.context().traceState().traceIdHex(),
-                                    span.context().traceState().spanIdHex(),
-                                    span.context().traceState().parentSpanIdHex(),
+                                    span.context().toTraceId(),
+                                    span.context().toSpanId(),
+                                    span.context().parentSpanId(),
                                     span.context().isSampled(),
                                     span.tags().containsKey(ERROR.getKey()))),
                             httpSerializer.serializerFor(TestSpanState.class)));
@@ -173,7 +173,7 @@ class TracingHttpServiceFilterTest {
     }
 
     @Test
-    public void testRequestWithTraceKeyWithNegativeSampledAndAlwaysTrueSampler() throws Exception {
+    void testRequestWithTraceKeyWithNegativeSampledAndAlwaysTrueSampler() throws Exception {
         final CountingInMemorySpanEventListener spanListener = new CountingInMemorySpanEventListener();
         try (ServerContext context = buildServer(spanListener, (__, ___) -> true)) {
             try (HttpClient client = forSingleAddress(serverHostAndPort(context)).build()) {

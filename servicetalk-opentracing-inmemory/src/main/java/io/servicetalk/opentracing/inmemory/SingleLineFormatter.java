@@ -16,8 +16,7 @@
 package io.servicetalk.opentracing.inmemory;
 
 import io.servicetalk.opentracing.inmemory.api.InMemorySpanContext;
-import io.servicetalk.opentracing.inmemory.api.InMemoryTraceState;
-import io.servicetalk.opentracing.inmemory.api.InMemoryTraceStateFormat;
+import io.servicetalk.opentracing.inmemory.api.InMemorySpanContextFormat;
 
 import javax.annotation.Nullable;
 
@@ -32,7 +31,7 @@ import static io.servicetalk.opentracing.internal.TracingConstants.NO_PARENT_ID;
  * <li>00000000000B75A2.00000000000B75A2&lt;:000000000015C003:1 (sampling=true)</li>
  * </ul>
  */
-public final class SingleLineFormatter implements InMemoryTraceStateFormat<SingleLineValue> {
+public final class SingleLineFormatter implements InMemorySpanContextFormat<SingleLineValue> {
     public static final SingleLineFormatter INSTANCE = new SingleLineFormatter();
 
     private SingleLineFormatter() {
@@ -41,13 +40,12 @@ public final class SingleLineFormatter implements InMemoryTraceStateFormat<Singl
 
     @Override
     public void inject(final InMemorySpanContext context, final SingleLineValue carrier) {
-        final InMemoryTraceState state = context.traceState();
-        carrier.set(format(state.traceIdHex(), state.spanIdHex(), state.parentSpanIdHex(), context.isSampled()));
+        carrier.set(format(context.toTraceId(), context.toSpanId(), context.parentSpanId(), context.isSampled()));
     }
 
     @Nullable
     @Override
-    public InMemoryTraceState extract(SingleLineValue carrier) {
+    public InMemorySpanContext extract(SingleLineValue carrier) {
         String value = carrier.get();
         if (value == null) {
             return null;
@@ -74,11 +72,11 @@ public final class SingleLineFormatter implements InMemoryTraceStateFormat<Singl
 
         // If the sampling flag is present, i3 should be pointing to the next-to-last
         // character of the string (......:0)
-        boolean sampled = false;
+        Boolean sampled = null;
         if (i3 == value.length() - 2) {
             sampled = '1' == value.charAt(i3 + 1);
         }
 
-        return new DefaultInMemoryTraceState(traceIdHex, spanIdHex, parentSpanIdResolved, sampled);
+        return new DefaultInMemorySpanContext(traceIdHex, spanIdHex, parentSpanIdResolved, sampled);
     }
 }

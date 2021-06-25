@@ -17,31 +17,37 @@ package io.servicetalk.opentracing.inmemory.api;
 
 import io.opentracing.SpanContext;
 
+import javax.annotation.Nullable;
+
+import static io.servicetalk.opentracing.internal.TracingConstants.NO_PARENT_ID;
+
 /**
  * A span that allows reading values at runtime.
  */
 public interface InMemorySpanContext extends SpanContext {
     /**
-     * Get the {@link InMemoryTraceState} associated with this object.
-     * @return the {@link InMemoryTraceState} associated with this object.
-     */
-    InMemoryTraceState traceState();
-
-    /**
-     * Returns whether the span should be sampled.
+     * Returns whether the span should be sampled or {@code null} if the sampling was not decided.
      * <p>
-     * Note this may differ from {@link InMemoryTraceState#isSampled()} if the value is overridden based upon
-     * some sampling policy.
-     *
      * @return whether the span should be sampled
      */
-    boolean isSampled();
+    @Nullable
+    Boolean isSampled();
 
-    default String toTraceId() {
-        return traceState().traceIdHex();
-    }
+    /**
+     * Returns the parent span ID in hex, or {@code null} if the parent span ID is not present.
+     *
+     * @return parent span ID in hex
+     */
+    @Nullable
+    String parentSpanId();
 
-    default String toSpanId() {
-        return traceState().spanIdHex();
+    /**
+     * Returns the parent span ID in hex. Returns {@code "null"} if the parent span ID is not present.
+     *
+     * @return parent span ID in hex
+     */
+    default String nonnullParentSpanIdHex() {
+        String parentSpanIdHex = parentSpanId();
+        return parentSpanIdHex == null ? NO_PARENT_ID : parentSpanIdHex;
     }
 }

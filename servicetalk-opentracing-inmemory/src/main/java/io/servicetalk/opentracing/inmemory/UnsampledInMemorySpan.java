@@ -16,25 +16,26 @@
 package io.servicetalk.opentracing.inmemory;
 
 import io.servicetalk.opentracing.inmemory.api.InMemoryReference;
+import io.servicetalk.opentracing.inmemory.api.InMemorySpanContext;
 import io.servicetalk.opentracing.inmemory.api.InMemorySpanLog;
 
 import io.opentracing.Span;
 import io.opentracing.tag.Tag;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.Nullable;
 
+import static java.util.Collections.emptyMap;
+
 final class UnsampledInMemorySpan extends AbstractInMemorySpan {
-    UnsampledInMemorySpan(String operationName, List<InMemoryReference> references,
-                          String traceIdHex, String spanIdHex, @Nullable String parentSpanIdHex) {
-        super(operationName, references, new DefaultInMemoryTraceState(traceIdHex, spanIdHex, parentSpanIdHex, false));
+    UnsampledInMemorySpan(String operationName, List<InMemoryReference> references, InMemorySpanContext context) {
+        super(operationName, references, context);
     }
 
     @Override
     public Map<String, Object> tags() {
-        return Collections.emptyMap();
+        return emptyMap();
     }
 
     @Nullable

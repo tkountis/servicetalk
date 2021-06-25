@@ -16,8 +16,7 @@
 package io.servicetalk.opentracing.inmemory;
 
 import io.servicetalk.opentracing.inmemory.api.InMemorySpanContext;
-import io.servicetalk.opentracing.inmemory.api.InMemoryTraceState;
-import io.servicetalk.opentracing.inmemory.api.InMemoryTraceStateFormat;
+import io.servicetalk.opentracing.inmemory.api.InMemorySpanContextFormat;
 
 import io.opentracing.propagation.TextMap;
 import org.slf4j.Logger;
@@ -35,7 +34,7 @@ import static io.servicetalk.opentracing.internal.ZipkinHeaderNames.TRACE_ID;
 /**
  * Zipkin-styled header serialization format.
  */
-final class TextMapFormatter implements InMemoryTraceStateFormat<TextMap> {
+final class TextMapFormatter implements InMemorySpanContextFormat<TextMap> {
     public static final TextMapFormatter INSTANCE = new TextMapFormatter();
     private static final Logger logger = LoggerFactory.getLogger(TextMapFormatter.class);
 
@@ -45,18 +44,17 @@ final class TextMapFormatter implements InMemoryTraceStateFormat<TextMap> {
 
     @Override
     public void inject(final InMemorySpanContext context, final TextMap carrier) {
-        final InMemoryTraceState state = context.traceState();
-        carrier.put(TRACE_ID, state.traceIdHex());
-        carrier.put(SPAN_ID, state.spanIdHex());
-        if (state.parentSpanIdHex() != null) {
-            carrier.put(PARENT_SPAN_ID, state.parentSpanIdHex());
+        carrier.put(TRACE_ID, context.toTraceId());
+        carrier.put(SPAN_ID, context.toSpanId());
+        if (context.parentSpanId() != null) {
+            carrier.put(PARENT_SPAN_ID, context.parentSpanId());
         }
         carrier.put(SAMPLED, context.isSampled() ? "1" : "0");
     }
 
     @Nullable
     @Override
-    public InMemoryTraceState extract(TextMap carrier) {
+    public InMemorySpanContext extract(TextMap carrier) {
         String traceId = null;
         String spanId = null;
         String parentSpanId = null;
@@ -97,6 +95,6 @@ final class TextMapFormatter implements InMemoryTraceStateFormat<TextMap> {
             return null;
         }
 
-        return new DefaultInMemoryTraceState(traceId, spanId, parentSpanId, sampled);
+        return new DefaultInMemorySpanContext(traceId, spanId, parentSpanId, sampled);
     }
 }

@@ -163,9 +163,9 @@ class TracingHttpRequesterFilterTest {
                         assertThat(serverSpanState.parentSpanId, isHexId());
 
                         assertThat(serverSpanState.traceId, equalToIgnoringCase(
-                                clientSpan.context().traceState().traceIdHex()));
+                                clientSpan.context().toTraceId()));
                         assertThat(serverSpanState.parentSpanId, equalToIgnoringCase(
-                                clientSpan.context().traceState().spanIdHex()));
+                                clientSpan.context().toSpanId()));
 
                         // don't mess with caller span state
                         assertEquals(clientSpan, tracer.activeSpan());

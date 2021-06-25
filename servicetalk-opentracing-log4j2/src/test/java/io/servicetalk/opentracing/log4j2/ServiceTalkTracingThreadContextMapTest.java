@@ -60,8 +60,8 @@ class ServiceTalkTracingThreadContextMapTest {
 
         LOGGER.debug("testing logging and MDC");
         String v = stableAccumulated(1000);
-        assertContainsMdcPair(v, "traceId=", span.context().traceState().traceIdHex());
-        assertContainsMdcPair(v, "spanId=", span.context().traceState().spanIdHex());
-        assertContainsMdcPair(v, "parentSpanId=", span.nonnullParentSpanIdHex());
+        assertContainsMdcPair(v, "traceId=", span.context().toTraceId());
+        assertContainsMdcPair(v, "spanId=", span.context().toSpanId());
+        assertContainsMdcPair(v, "parentSpanId=", span.context().nonnullParentSpanIdHex());
     }
 }

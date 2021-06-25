@@ -21,7 +21,7 @@ import io.servicetalk.http.api.HttpHeaders;
 import io.servicetalk.http.api.HttpResponseMetaData;
 import io.servicetalk.http.api.StreamingHttpResponse;
 import io.servicetalk.http.utils.BeforeFinallyHttpOperator;
-import io.servicetalk.opentracing.inmemory.api.InMemoryTraceStateFormat;
+import io.servicetalk.opentracing.inmemory.api.InMemorySpanContextFormat;
 
 import io.opentracing.Scope;
 import io.opentracing.Span;
@@ -39,7 +39,7 @@ abstract class AbstractTracingHttpFilter {
 
     protected final Tracer tracer;
     protected final String componentName;
-    protected final InMemoryTraceStateFormat<HttpHeaders> formatter;
+    protected final InMemorySpanContextFormat<HttpHeaders> formatter;
 
     /**
      * Create a new instance.

@@ -58,21 +58,21 @@ public final class ServiceTalkTracingThreadContextMap extends ServiceTalkThreadC
             case TRACE_ID_KEY: {
                 InMemorySpan span = SCOPE_MANAGER.activeSpan();
                 if (span != null) {
-                    return span.context().traceState().traceIdHex();
+                    return span.context().toTraceId();
                 }
                 break;
             }
             case SPAN_ID_KEY: {
                 InMemorySpan span = SCOPE_MANAGER.activeSpan();
                 if (span != null) {
-                    return span.context().traceState().spanIdHex();
+                    return span.context().toTraceId();
                 }
                 break;
             }
             case PARENT_SPAN_ID_KEY: {
                 InMemorySpan span = SCOPE_MANAGER.activeSpan();
                 if (span != null) {
-                    return span.nonnullParentSpanIdHex();
+                    return span.context().nonnullParentSpanIdHex();
                 }
                 break;
             }
@@ -92,9 +92,9 @@ public final class ServiceTalkTracingThreadContextMap extends ServiceTalkThreadC
         Map<String, String> copy = super.getCopy();
         InMemorySpan span = SCOPE_MANAGER.activeSpan();
         if (span != null) {
-            copy.put(TRACE_ID_KEY, span.context().traceState().traceIdHex());
-            copy.put(SPAN_ID_KEY, span.context().traceState().spanIdHex());
-            copy.put(PARENT_SPAN_ID_KEY, span.nonnullParentSpanIdHex());
+            copy.put(TRACE_ID_KEY, span.context().toTraceId());
+            copy.put(SPAN_ID_KEY, span.context().toSpanId());
+            copy.put(PARENT_SPAN_ID_KEY, span.context().nonnullParentSpanIdHex());
         }
         return copy;
     }
@@ -130,9 +130,9 @@ public final class ServiceTalkTracingThreadContextMap extends ServiceTalkThreadC
             copy = new HashMap<>(4);
         }
         if (span != null) {
-            copy.put(TRACE_ID_KEY, span.context().traceState().traceIdHex());
-            copy.put(SPAN_ID_KEY, span.context().traceState().spanIdHex());
-            copy.put(PARENT_SPAN_ID_KEY, span.nonnullParentSpanIdHex());
+            copy.put(TRACE_ID_KEY, span.context().toTraceId());
+            copy.put(SPAN_ID_KEY, span.context().toSpanId());
+            copy.put(PARENT_SPAN_ID_KEY, span.context().nonnullParentSpanIdHex());
         }
         return copy;
     }
