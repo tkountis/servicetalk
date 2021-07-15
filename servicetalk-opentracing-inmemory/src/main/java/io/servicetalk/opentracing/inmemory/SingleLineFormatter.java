@@ -40,7 +40,12 @@ public final class SingleLineFormatter implements InMemorySpanContextFormat<Sing
 
     @Override
     public void inject(final InMemorySpanContext context, final SingleLineValue carrier) {
-        carrier.set(format(context.toTraceId(), context.toSpanId(), context.parentSpanId(), context.isSampled()));
+        final Boolean isSampled = context.isSampled();
+        if (isSampled != null) {
+            carrier.set(format(context.toTraceId(), context.toSpanId(), context.parentSpanId(), isSampled));
+        } else {
+            carrier.set(format(context.toTraceId(), context.toSpanId(), context.parentSpanId()));
+        }
     }
 
     @Nullable

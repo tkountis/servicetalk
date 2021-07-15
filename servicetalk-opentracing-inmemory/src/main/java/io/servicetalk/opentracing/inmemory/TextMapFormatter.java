@@ -49,7 +49,10 @@ final class TextMapFormatter implements InMemorySpanContextFormat<TextMap> {
         if (context.parentSpanId() != null) {
             carrier.put(PARENT_SPAN_ID, context.parentSpanId());
         }
-        carrier.put(SAMPLED, context.isSampled() ? "1" : "0");
+        final Boolean isSampled = context.isSampled();
+        if (isSampled != null) {
+            carrier.put(SAMPLED, isSampled ? "1" : "0");
+        }
     }
 
     @Nullable

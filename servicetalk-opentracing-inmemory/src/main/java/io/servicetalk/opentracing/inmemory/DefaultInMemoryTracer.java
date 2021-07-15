@@ -190,8 +190,7 @@ public final class DefaultInMemoryTracer extends AbstractInMemoryTracer {
         //noop
     }
 
-    @Override
-    protected InMemorySpanContext newSpanContext(final String traceId, final String spanId,
+    private InMemorySpanContext newSpanContext(final String traceId, final String spanId,
                                                  @Nullable final String parentSpanId, final boolean sampled) {
         return new DefaultInMemorySpanContext(traceId, spanId, parentSpanId, sampled);
     }

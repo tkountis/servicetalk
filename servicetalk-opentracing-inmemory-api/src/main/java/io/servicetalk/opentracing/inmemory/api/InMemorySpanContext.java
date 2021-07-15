@@ -19,8 +19,6 @@ import io.opentracing.SpanContext;
 
 import javax.annotation.Nullable;
 
-import static io.servicetalk.opentracing.internal.TracingConstants.NO_PARENT_ID;
-
 /**
  * A span that allows reading values at runtime.
  */
@@ -40,14 +38,4 @@ public interface InMemorySpanContext extends SpanContext {
      */
     @Nullable
     String parentSpanId();
-
-    /**
-     * Returns the parent span ID in hex. Returns {@code "null"} if the parent span ID is not present.
-     *
-     * @return parent span ID in hex
-     */
-    default String nonnullParentSpanIdHex() {
-        String parentSpanIdHex = parentSpanId();
-        return parentSpanIdHex == null ? NO_PARENT_ID : parentSpanIdHex;
-    }
 }

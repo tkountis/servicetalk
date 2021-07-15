@@ -29,7 +29,7 @@ import static io.servicetalk.opentracing.inmemory.SingleLineValue.format;
 /**
  * SpanContext object used by the {@link DefaultInMemoryTracer}.
  */
-public class DefaultInMemorySpanContext implements InMemorySpanContext {
+public final class DefaultInMemorySpanContext implements InMemorySpanContext {
     private static final Logger logger = LoggerFactory.getLogger(DefaultInMemorySpanContext.class);
 
     private final String traceId;

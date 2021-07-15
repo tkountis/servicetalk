@@ -29,6 +29,7 @@ import java.util.Map;
 import javax.annotation.Nullable;
 
 import static io.servicetalk.opentracing.asynccontext.AsyncContextInMemoryScopeManager.SCOPE_MANAGER;
+import static io.servicetalk.opentracing.internal.TracingIdUtils.idOrNullAsValue;
 import static java.util.Collections.unmodifiableMap;
 
 /**
@@ -72,7 +73,7 @@ public final class ServiceTalkTracingThreadContextMap extends ServiceTalkThreadC
             case PARENT_SPAN_ID_KEY: {
                 InMemorySpan span = SCOPE_MANAGER.activeSpan();
                 if (span != null) {
-                    return span.context().nonnullParentSpanIdHex();
+                    return idOrNullAsValue(span.context().parentSpanId());
                 }
                 break;
             }
@@ -94,7 +95,7 @@ public final class ServiceTalkTracingThreadContextMap extends ServiceTalkThreadC
         if (span != null) {
             copy.put(TRACE_ID_KEY, span.context().toTraceId());
             copy.put(SPAN_ID_KEY, span.context().toSpanId());
-            copy.put(PARENT_SPAN_ID_KEY, span.context().nonnullParentSpanIdHex());
+            copy.put(PARENT_SPAN_ID_KEY, idOrNullAsValue(span.context().parentSpanId()));
         }
         return copy;
     }
@@ -132,7 +133,7 @@ public final class ServiceTalkTracingThreadContextMap extends ServiceTalkThreadC
         if (span != null) {
             copy.put(TRACE_ID_KEY, span.context().toTraceId());
             copy.put(SPAN_ID_KEY, span.context().toSpanId());
-            copy.put(PARENT_SPAN_ID_KEY, span.context().nonnullParentSpanIdHex());
+            copy.put(PARENT_SPAN_ID_KEY, idOrNullAsValue(span.context().parentSpanId()));
         }
         return copy;
     }

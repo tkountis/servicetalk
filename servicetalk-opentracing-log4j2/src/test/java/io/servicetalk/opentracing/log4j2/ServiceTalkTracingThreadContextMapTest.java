@@ -29,6 +29,7 @@ import org.slf4j.MDC;
 import static io.servicetalk.log4j2.mdc.utils.LoggerStringWriter.assertContainsMdcPair;
 import static io.servicetalk.log4j2.mdc.utils.LoggerStringWriter.stableAccumulated;
 import static io.servicetalk.opentracing.asynccontext.AsyncContextInMemoryScopeManager.SCOPE_MANAGER;
+import static io.servicetalk.opentracing.internal.TracingIdUtils.idOrNullAsValue;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
@@ -62,6 +63,6 @@ class ServiceTalkTracingThreadContextMapTest {
         String v = stableAccumulated(1000);
         assertContainsMdcPair(v, "traceId=", span.context().toTraceId());
         assertContainsMdcPair(v, "spanId=", span.context().toSpanId());
-        assertContainsMdcPair(v, "parentSpanId=", span.context().nonnullParentSpanIdHex());
+        assertContainsMdcPair(v, "parentSpanId=", idOrNullAsValue(span.context().parentSpanId()));
     }
 }

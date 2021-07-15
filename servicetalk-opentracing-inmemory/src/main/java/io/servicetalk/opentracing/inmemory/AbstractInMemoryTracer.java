@@ -74,16 +74,4 @@ abstract class AbstractInMemoryTracer implements InMemoryTracer {
             return null;
         }
     }
-
-    /**
-     * Create a span context with given state. Called when extracting from carriers.
-     * @param traceId      trace ID
-     * @param spanId       span ID
-     * @param parentSpanId parent span ID, optional
-     * @param sampled      whether the trace is sampled
-     *
-     * @return span context {@link InMemorySpanContext}
-     */
-    protected abstract InMemorySpanContext newSpanContext(String traceId, String spanId, String parentSpanId,
-                                                          boolean sampled);
 }

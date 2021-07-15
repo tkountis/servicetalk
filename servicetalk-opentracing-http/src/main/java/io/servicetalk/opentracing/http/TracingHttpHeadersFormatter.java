@@ -65,7 +65,11 @@ final class TracingHttpHeadersFormatter implements InMemorySpanContextFormat<Htt
         if (parentSpanIdHex != null) {
             carrier.set(PARENT_SPAN_ID, parentSpanIdHex);
         }
-        carrier.set(SAMPLED, context.isSampled() ? "1" : "0");
+
+        final Boolean isSampled = context.isSampled();
+        if (isSampled != null) {
+            carrier.set(SAMPLED, isSampled ? "1" : "0");
+        }
     }
 
     @Nullable
